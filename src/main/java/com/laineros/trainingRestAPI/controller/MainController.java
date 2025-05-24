@@ -1,46 +1,36 @@
 package com.laineros.trainingRestAPI.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laineros.trainingRestAPI.entity.Cat;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.laineros.trainingRestAPI.repository.CatRepo;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 public class MainController {
-    @Autowired
-    private ObjectMapper objectMapper;
 
-    @GetMapping("/api/main")
-    public String mainListener() {
-        return "Whassup";
+    private final CatRepo catRepo;
+    private final ObjectMapper objectMapper;
+
+    @PostMapping("/api/add")
+    public void addCat(@RequestBody Cat cat) {
+        log.info("New row -> " + catRepo.save(cat));
     }
 
-    @GetMapping("api/cat")
-    public String getCat() {
-        Cat cat = new Cat("Murzik", 3, 8);
-        String json = null;
-        try {
-            json = objectMapper.writeValueAsString(cat);
-        } catch (JsonProcessingException e) {
-            System.out.println("Error with cat");
-        }
-        return json;
+    @SneakyThrows
+    @GetMapping("/api/all")
+    public String getAllCats() {
+        List<Cat> cats = catRepo.findAll();
+        return objectMapper.writeValueAsString(cats);
     }
-
-    @PostMapping("api/special")
-    public String postSpecialCat(@RequestParam String name) {
-        Cat cat = new Cat(name, 3, 8);
-        String json = null;
-        try {
-            json = objectMapper.writeValueAsString(cat);
-        } catch (JsonProcessingException e) {
-            System.out.println("Error with cat");
-        }
-        return json;
-    }
-
 }
