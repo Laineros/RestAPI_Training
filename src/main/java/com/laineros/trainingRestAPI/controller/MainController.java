@@ -1,15 +1,11 @@
 package com.laineros.trainingRestAPI.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laineros.trainingRestAPI.entity.Cat;
 import com.laineros.trainingRestAPI.repository.CatRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +16,6 @@ import java.util.List;
 public class MainController {
 
     private final CatRepo catRepo;
-    private final ObjectMapper objectMapper;
 
     @PostMapping("/api/add")
     public void addCat(@RequestBody Cat cat) {
@@ -29,8 +24,24 @@ public class MainController {
 
     @SneakyThrows
     @GetMapping("/api/all")
-    public String getAllCats() {
-        List<Cat> cats = catRepo.findAll();
-        return objectMapper.writeValueAsString(cats);
+    public List<Cat> getAllCats() {
+        return catRepo.findAll();
+    }
+
+    @GetMapping("/api")
+    public Cat getCat(@RequestParam int id) {
+        return catRepo.findById(id).orElseThrow();
+    }
+
+    @DeleteMapping("/api")
+    public void deleteCat(@RequestParam int id) {
+        catRepo.deleteById(id);
+    }
+    @PutMapping("/api/add")
+    public String updateCat(@RequestBody Cat cat) {
+        if (!catRepo.existsById(cat.getId())) {
+            return "Not found";
+        }
+        return catRepo.save(cat).toString();
     }
 }
