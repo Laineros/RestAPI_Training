@@ -1,7 +1,10 @@
 package com.laineros.trainingRestAPI.controller;
 
+import com.laineros.trainingRestAPI.DTO.CatDTO;
 import com.laineros.trainingRestAPI.entity.Cat;
 import com.laineros.trainingRestAPI.repository.CatRepo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -10,16 +13,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+@Tag(name = "mainMethods")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MainController {
 
     private final CatRepo catRepo;
-
+    @Operation(
+            summary = "Добавляет нового китика в базу",
+            description = "Получает DTO кота, собирает с помощью билдера и сохраняет сущность в базу"
+    )
     @PostMapping("/api/add")
-    public void addCat(@RequestBody Cat cat) {
-        log.info("New row -> " + catRepo.save(cat));
+    public void addCat(@RequestBody CatDTO catDTO) {
+        log.info("New row -> " +
+                catRepo.save(Cat.builder()
+                        .age(catDTO.getAge())
+                        .weight(catDTO.getWeight())
+                        .name(catDTO.getName())
+                        .build()));
     }
 
     @SneakyThrows
