@@ -2,12 +2,13 @@ package com.laineros.trainingRestAPI.entity;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "cats")
 public class Cat {
     @Id
